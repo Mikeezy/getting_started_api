@@ -1,0 +1,29 @@
+{
+  "nodeEnv": "development",
+  "port": 3005,
+  "jwtSecret": "",
+  "logFilePath": "./logs",
+  "appName": "",
+  "link": {
+    "confirmationFrontend": "",
+    "confirmationFrontendAdmin": "",
+    "resetPasswordFrontend": ""
+  },
+  "hostname": {
+    "backend": "",
+    "frontend": ""
+  },
+  "limitApiCall": {
+    "auth": 5
+  },
+  "email": {
+    "from": "",
+    "header": "",
+    "username": "",
+    "password": "",
+    "clientId": "",
+    "clientSecret": "",
+    "refreshToken": "",
+    "admin": []
+  }
+}
