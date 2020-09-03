@@ -7,7 +7,7 @@ require('colors');
 const dbURL = process.env.MONGO_URL;
 
 module.exports = function runDB() {
-  mongoose.connect(`${process.env.MONGO_URL}`, {
+  mongoose.connect(`${dbURL}`, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
   });
