@@ -4,6 +4,7 @@ const path = require('path');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const config = require('./config');
 const runDB = require('./config/database');
@@ -19,6 +20,9 @@ const createServer = () => {
 
   // Express
   const app = express();
+
+  // Handle cookies
+  app.use(cookieParser());
 
   // Morgan configuration
   morgan.token('body', (req) => {

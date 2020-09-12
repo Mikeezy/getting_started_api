@@ -26,11 +26,16 @@ router.post(
   validator.checkSchema(validationSchema.auth),
   validationHandlerMiddleware,
   asyncMiddleware(async (req, res, next) => {
-    const data = {
+    const data_ = {
       ...req.body,
     };
 
-    res.locals.data = await auth(data);
+    const { data, token } = await auth(data_);
+
+    res.locals.data = data;
+    res.cookie(config.get('accessTokenCookieName'), `Bearer ${token}`, {
+      maxAge: 86400000,
+    });
 
     next();
   }),
@@ -89,7 +94,9 @@ router.post(
       ...decoded,
     };
 
-    res.locals.data = await signupAdminPartTwo(data);
+    const { confirm_password, ...dataFiltered } = data;
+
+    res.locals.data = await signupAdminPartTwo(dataFiltered);
 
     next();
   }),

@@ -2,6 +2,7 @@
 
 - [ ] bug fix
 - [ ] new feature
+- [ ] improvement
 - [ ] documentation
 - [ ] other (describe)
 

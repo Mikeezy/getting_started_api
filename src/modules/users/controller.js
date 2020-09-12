@@ -19,7 +19,6 @@ const tokenExpiry1h = '1h';
 
 exports.getAll = async function getAll({ offset = 0, limit = 5 }) {
   const dataPromise = await User.find({
-    status: true,
     role: {
       $ne: 'super_admin',
     },
@@ -30,7 +29,13 @@ exports.getAll = async function getAll({ offset = 0, limit = 5 }) {
     .sort('lastname')
     .exec();
 
-  const totalPromise = User.find().countDocuments().exec();
+  const totalPromise = User.find({
+    role: {
+      $ne: 'super_admin',
+    },
+  })
+    .countDocuments()
+    .exec();
 
   const [data, total] = await Promise.all([dataPromise, totalPromise]);
 
@@ -126,9 +131,7 @@ exports.auth = async function auth({ email, password, expiresIn = null }) {
         token = await jwtSignAsync(userData, privateKey);
       }
 
-      userData.token = token;
-
-      return userData;
+      return { data: userData, token };
     } else {
       throw new customError(
         'Email or password incorrect, please retry !',
@@ -175,7 +178,6 @@ exports.signupAdminPartTwo = async function signupAdminPartTwo(data) {
     passwordHashPromise,
   ]);
 
-  delete data.confirm_password;
   data.password = passwordHash;
   data.uuid = uuid;
   data.status = true;

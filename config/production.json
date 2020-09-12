@@ -4,6 +4,7 @@
   "jwtSecret": "",
   "logFilePath": "./logs",
   "appName": "",
+  "accessTokenCookieName": "",
   "link": {
     "confirmationFrontend": "",
     "confirmationFrontendAdmin": "",

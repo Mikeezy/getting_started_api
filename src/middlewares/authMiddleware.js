@@ -10,7 +10,11 @@ const {
 const privateKey = config.get('jwtSecret');
 
 module.exports = function (req, res, next) {
-  let token = req.body.token || req.query.token || req.headers['authorization'];
+  let token =
+    req.body.token ||
+    req.query.token ||
+    req.headers['authorization'] ||
+    req.cookies.accessToken;
 
   if (!token) {
     let error = new customError(
