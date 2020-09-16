@@ -28,11 +28,15 @@ router.post(
   asyncMiddleware(async (req, res, next) => {
     const data_ = {
       ...req.body,
+      expiresIn: true,
     };
 
-    const { data, token } = await auth(data_);
+    const {
+      data: { password, ...data__ },
+      token,
+    } = await auth(data_);
 
-    res.locals.data = data;
+    res.locals.data = { ...data__, token };
     res.cookie(config.get('accessTokenCookieName'), `Bearer ${token}`, {
       maxAge: 86400000,
     });
