@@ -1,53 +1,57 @@
 const jwt = require('jsonwebtoken');
-const { customError } = require('../utils/customError');
+const { CustomError } = require('../utils/customError');
 const config = require('../../config');
 const {
   TOKEN_NOT_PROVIDED,
   TOKEN_EXPIRED,
   TOKEN_INVALID,
 } = require('../utils/errorCode');
+const Promise = require('bluebird');
 
+const jwtVerifyAsync = Promise.promisify(jwt.verify);
 const privateKey = config.get('jwtSecret');
+const accessTokenCookieName = config.get('accessTokenCookieName');
 
-module.exports = function (req, res, next) {
+module.exports = async (req, res, next) => {
   let token =
     req.body.token ||
     req.query.token ||
     req.headers['authorization'] ||
-    req.cookies.accessToken;
+    req.cookies[accessTokenCookieName];
 
   if (!token) {
-    let error = new customError(
-      'Token not provide, please authenticate yourself !',
-      TOKEN_NOT_PROVIDED
+    next(
+      new CustomError(
+        'Token non fournit, veuillez vous identifier svp !',
+        TOKEN_NOT_PROVIDED
+      )
     );
-    next(error);
   } else {
     token = token.replace('Bearer ', '');
 
-    jwt.verify(token, privateKey, function (error, decoded) {
-      if (error) {
-        if (error.name === 'TokenExpiredError') {
-          let error = new customError(
-            'Token expired, please retry or authenticate yourself !',
-            TOKEN_EXPIRED
-          );
-          next(error);
-        } else if (error.name === 'JsonWebTokenError') {
-          let error = new customError(
-            'Invalid Token, please retry or authenticate yourself !',
-            TOKEN_INVALID
-          );
-          next(error);
-        } else {
-          next(error);
-        }
-      }
+    try {
+      const decoded = await jwtVerifyAsync(token, privateKey);
 
       res.locals.user = decoded;
-      req.user = decoded;
-
       next();
-    });
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        next(
+          new CustomError(
+            'Token expired, please retry or authenticate yourself !',
+            TOKEN_EXPIRED
+          )
+        );
+      } else if (error.name === 'JsonWebTokenError') {
+        next(
+          new CustomError(
+            'Invalid Token, please retry or authenticate yourself !',
+            TOKEN_INVALID
+          )
+        );
+      } else {
+        next(error);
+      }
+    }
   }
 };

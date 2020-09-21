@@ -4,7 +4,7 @@ const Promise = require('bluebird');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const emailController = require('../../email/controller');
-const { customError, customSimpleError } = require('../../utils/customError');
+const { CustomError, CustomSimpleError } = require('../../utils/customError');
 const config = require('../../../config');
 const {
   AUTHENTICATION_ERROR,
@@ -89,7 +89,7 @@ exports.updatePassword = async function updatePassword({
   const response = await bcrypt.compare(old_password, userGet.password);
 
   if (!response) {
-    throw new customError('Password incorrect, please retry !');
+    throw new CustomError('Password incorrect, please retry !');
   }
 
   const hash = await bcrypt.hash(password, saltRound);
@@ -133,13 +133,13 @@ exports.auth = async function auth({ email, password, expiresIn = null }) {
 
       return { data: userData, token };
     } else {
-      throw new customError(
+      throw new CustomError(
         'Email or password incorrect, please retry !',
         AUTHENTICATION_ERROR
       );
     }
   } else {
-    throw new customError(
+    throw new CustomError(
       'Email or password incorrect, please retry !',
       AUTHENTICATION_ERROR
     );
@@ -165,7 +165,7 @@ exports.signupAdminPartOne = async function signupAdminPartOne(data) {
   if (emailInfo) {
     return null;
   } else {
-    throw new customSimpleError();
+    throw new CustomSimpleError();
   }
 };
 
@@ -234,7 +234,7 @@ exports.signup = async function signup(data) {
   if (emailInfo) {
     return null;
   } else {
-    throw new customSimpleError();
+    throw new CustomSimpleError();
   }
 };
 
@@ -260,12 +260,12 @@ exports.checkToken = async function checkToken({ token }) {
     return decoded;
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      throw new customError(
+      throw new CustomError(
         'Token expired, please contact support !',
         TOKEN_EXPIRED
       );
     } else if (error.name === 'JsonWebTokenError') {
-      throw new customError('Invalid Token, please retry !', TOKEN_INVALID);
+      throw new CustomError('Invalid Token, please retry !', TOKEN_INVALID);
     } else {
       throw error;
     }
@@ -301,7 +301,7 @@ exports.resetPasswordPartOne = async function resetPasswordPartOne({ email }) {
   if (emailInfo) {
     return null;
   } else {
-    throw new customSimpleError();
+    throw new CustomSimpleError();
   }
 };
 
