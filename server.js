@@ -54,7 +54,7 @@ const createServer = () => {
       query: tokens.query(req, res),
     };
 
-    return `${JSON.stringify(format, null, 2)} \n`;
+    return `${JSON.stringify(format, null, 2)}\n`;
   }
 
   // Middleware configuration
